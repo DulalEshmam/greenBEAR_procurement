@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="field_greenbear_budget_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Budgetbezeichnung</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+    <record id="field_greenbear_budget_odoo_reference" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_odoo_budget_reference</field>
+        <field name="field_description">Odoo-Budgetreferenz</field>
+        <field name="ttype">char</field>
+        <field name="help">Bezeichnung des zugehörigen nativen Odoo-Kostenstellenbudgets.</field>
+    </record>
+
+    <record id="field_greenbear_budget_season_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_season_id</field>
+        <field name="field_description">Saison</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.season</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+    </record>
+    <record id="field_greenbear_budget_module_area_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_module_area_id</field>
+        <field name="field_description">Modul/Bereich</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.module_area</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+    </record>
+    <record id="field_greenbear_budget_component_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_component_id</field>
+        <field name="field_description">Baugruppe/Komponente</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.component</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+    </record>
+    <record id="field_greenbear_budget_subcategory_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_subcategory_id</field>
+        <field name="field_description">Unterkategorie</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.subcategory</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+    </record>
+    <record id="field_greenbear_budget_funding_source_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_funding_source_id</field>
+        <field name="field_description">Finanzierungsquelle</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.funding_source</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+    </record>
+
+    <record id="field_greenbear_budget_budgeted_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_budgeted_amount</field>
+        <field name="field_description">Budgetiert (EUR)</field>
+        <field name="ttype">float</field>
+        <field name="required">True</field>
+        <field name="help">Für den Pilot aus dem zugeordneten nativen Odoo-Budget übernommener Budgetbetrag.</field>
+    </record>
+    <record id="field_greenbear_budget_active_precommitment_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_active_precommitment_amount</field>
+        <field name="field_description">Aktive Vorabbindungen (EUR)</field>
+        <field name="ttype">float</field>
+    </record>
+    <record id="field_greenbear_budget_odoo_committed_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_odoo_committed_amount</field>
+        <field name="field_description">Odoo-Bindungen (EUR)</field>
+        <field name="ttype">float</field>
+        <field name="help">Aus verknüpften bestätigten Odoo-Bestellungen bzw. ihren gebuchten Lieferantenrechnungen abgeleiteter Pilotwert.</field>
+    </record>
+    <record id="field_greenbear_budget_available_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_available_amount</field>
+        <field name="field_description">Verfügbar (EUR)</field>
+        <field name="ttype">float</field>
+        <field name="help">Budgetiert minus aktive Vorabbindungen minus Odoo-Bindungen.</field>
+    </record>
+    <record id="field_greenbear_budget_last_refresh" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_last_refresh</field>
+        <field name="field_description">Letzte Aktualisierung</field>
+        <field name="ttype">datetime</field>
+    </record>
+    <record id="field_greenbear_budget_overrun" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_overrun</field>
+        <field name="field_description">Budget überschritten</field>
+        <field name="ttype">boolean</field>
+    </record>
+    <record id="field_greenbear_budget_overrun_notified" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_overrun_notified</field>
+        <field name="field_description">Finance-Aktivität erzeugt</field>
+        <field name="ttype">boolean</field>
+    </record>
+    <record id="field_greenbear_precommitment_reference" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_reference</field>
+        <field name="field_description">Bindungsreferenz</field>
+        <field name="ttype">char</field>
+        <field name="index">True</field>
+    </record>
+    <record id="field_greenbear_precommitment_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Bezeichnung</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+    </record>
+    <record id="field_greenbear_precommitment_procurement_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_procurement_id</field>
+        <field name="field_description">Beschaffungsvorgang</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.procurement</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+        <field name="index">True</field>
+    </record>
+    <record id="field_greenbear_precommitment_budget_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_budget_id</field>
+        <field name="field_description">greenBEAR-Budget</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.budget</field>
+        <field name="required">True</field>
+        <field name="on_delete">restrict</field>
+        <field name="index">True</field>
+    </record>
+    <record id="field_greenbear_budget_precommitment_ids" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_budget"/>
+        <field name="name">x_precommitment_ids</field>
+        <field name="field_description">Vorab-Mittelbindungen</field>
+        <field name="ttype">one2many</field>
+        <field name="relation">x_greenbear.precommitment</field>
+        <field name="relation_field">x_budget_id</field>
+    </record>
+    <record id="field_greenbear_precommitment_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_amount</field>
+        <field name="field_description">Betrag (EUR)</field>
+        <field name="ttype">float</field>
+        <field name="required">True</field>
+    </record>
+    <record id="field_greenbear_precommitment_state" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_state</field>
+        <field name="field_description">Bindungsstatus</field>
+        <field name="ttype">selection</field>
+        <field name="required">True</field>
+    </record>
+    <record id="selection_greenbear_precommitment_draft" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="name">Vorgemerkt</field><field name="value">draft</field><field name="sequence">10</field>
+    </record>
+    <record id="selection_greenbear_precommitment_active" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="name">Aktiv</field><field name="value">active</field><field name="sequence">20</field>
+    </record>
+    <record id="selection_greenbear_precommitment_transferred" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="name">An Bestellung übergeben</field><field name="value">transferred</field><field name="sequence">30</field>
+    </record>
+    <record id="selection_greenbear_precommitment_released" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="name">Freigegeben (aufgelöst)</field><field name="value">released</field><field name="sequence">40</field>
+    </record>
+    <record id="selection_greenbear_precommitment_cancelled" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="name">Storniert</field><field name="value">cancelled</field><field name="sequence">50</field>
+    </record>
+    <record id="field_greenbear_precommitment_purchase_order_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_purchase_order_id</field>
+        <field name="field_description">Übergebene Bestellung</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">purchase.order</field>
+    </record>
+
+    <record id="field_greenbear_precommitment_season_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_season_id</field><field name="field_description">Saison</field>
+        <field name="ttype">many2one</field><field name="relation">x_greenbear.season</field>
+    </record>
+    <record id="field_greenbear_precommitment_module_area_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_module_area_id</field><field name="field_description">Modul/Bereich</field>
+        <field name="ttype">many2one</field><field name="relation">x_greenbear.module_area</field>
+    </record>
+    <record id="field_greenbear_precommitment_component_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_component_id</field><field name="field_description">Baugruppe/Komponente</field>
+        <field name="ttype">many2one</field><field name="relation">x_greenbear.component</field>
+    </record>
+    <record id="field_greenbear_precommitment_subcategory_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_subcategory_id</field><field name="field_description">Unterkategorie</field>
+        <field name="ttype">many2one</field><field name="relation">x_greenbear.subcategory</field>
+    </record>
+    <record id="field_greenbear_precommitment_funding_source_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_funding_source_id</field><field name="field_description">Finanzierungsquelle</field>
+        <field name="ttype">many2one</field><field name="relation">x_greenbear.funding_source</field>
+    </record>
+    <record id="field_greenbear_precommitment_activated_on" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_activated_on</field><field name="field_description">Aktiviert am</field><field name="ttype">datetime</field>
+    </record>
+    <record id="field_greenbear_precommitment_transferred_on" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_transferred_on</field><field name="field_description">Übergeben am</field><field name="ttype">datetime</field>
+    </record>
+    <record id="field_greenbear_precommitment_released_on" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_precommitment"/>
+        <field name="name">x_released_on</field><field name="field_description">Aufgelöst am</field><field name="ttype">datetime</field>
+    </record>
+</odoo>

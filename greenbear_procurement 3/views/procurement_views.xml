@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_greenbear_procurement_list" model="ir.ui.view">
+        <field name="name">greenbear.procurement.list</field>
+        <field name="model">x_greenbear.procurement</field>
+        <field name="arch" type="xml">
+            <list string="Beschaffungsvorgänge">
+                <field name="x_reference"/>
+                <field name="x_name"/>
+                <field name="x_applicant_id"/>
+                <field name="x_responsible_id"/>
+                <field name="x_module_area_id" optional="show"/>
+                <field name="x_funding_source_id" optional="hide"/>
+                <field name="x_expected_amount"/>
+                <field name="x_budget_id" optional="show"/>
+                <field name="x_available_budget_snapshot" optional="hide"/>
+                <field name="x_state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_greenbear_procurement_form" model="ir.ui.view">
+        <field name="name">greenbear.procurement.form</field>
+        <field name="model">x_greenbear.procurement</field>
+        <field name="arch" type="xml">
+            <form string="Beschaffungsvorgang">
+                <header>
+                    <button name="%(greenbear_procurement.action_greenbear_submit)d"
+                            type="action" string="Einreichen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_member"
+                            invisible="x_state != 'planned'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_start_review)d"
+                            type="action" string="Prüfung beginnen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_module_lead,greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state != 'submitted'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_approve)d"
+                            type="action" string="Freigeben" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state != 'in_review'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_reject)d"
+                            type="action" string="Ablehnen"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state not in ['submitted', 'in_review']"/>
+                    <button name="%(greenbear_procurement.action_greenbear_rework)d"
+                            type="action" string="Überarbeiten" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_member"
+                            invisible="x_state != 'rejected'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_mark_ordered)d"
+                            type="action" string="Als bestellt kennzeichnen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state != 'approved'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_mark_delivered)d"
+                            type="action" string="Lieferung bestätigen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_member"
+                            invisible="x_state != 'ordered'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_mark_invoiced)d"
+                            type="action" string="Rechnung erfassen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state != 'delivered'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_close)d"
+                            type="action" string="Abschließen" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state != 'invoiced'"/>
+                    <button name="%(greenbear_procurement.action_greenbear_cancel)d"
+                            type="action" string="Stornieren"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"
+                            invisible="x_state in ['closed', 'cancelled']"/>
+                    <field name="x_state"
+                           widget="statusbar"
+                           statusbar_visible="planned,submitted,in_review,approved,ordered,delivered,invoiced,closed"
+                           readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not x_budget_overrun">
+                        <field name="x_budget_note" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="x_reference" readonly="1"/>
+                            <field name="x_name" readonly="x_state != 'planned'"/>
+                            <field name="x_applicant_id" readonly="x_state != 'planned'"/>
+                            <field name="x_responsible_id" readonly="x_state != 'planned'"/>
+                        </group>
+                        <group>
+                            <field name="x_expected_amount" readonly="x_state != 'planned'"/>
+                            <field name="x_state" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Dimensionen">
+                        <group>
+                            <field name="x_season_id" readonly="x_state != 'planned'"/>
+                            <field name="x_module_area_id" readonly="x_state != 'planned'"/>
+                            <field name="x_component_id" readonly="x_state != 'planned'"/>
+                        </group>
+                        <group>
+                            <field name="x_subcategory_id" readonly="x_state != 'planned'"/>
+                            <field name="x_funding_source_id" readonly="x_state != 'planned'"/>
+                        </group>
+                    </group>
+                    <group string="Budgetsteuerung">
+                        <group>
+                            <field name="x_budget_id" readonly="x_state != 'planned'"/>
+                            <field name="x_available_budget_snapshot" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="x_budget_overrun" readonly="1"/>
+                            <field name="x_budget_note" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Vorab-Mittelbindungen" col="1">
+                        <field name="x_precommitment_ids" nolabel="1" readonly="1">
+                            <list create="0" delete="0" decoration-info="x_state == 'active'" decoration-muted="x_state in ['released', 'cancelled']">
+                                <field name="x_reference"/>
+                                <field name="x_amount"/>
+                                <field name="x_state"/>
+                                <field name="x_budget_id" optional="hide"/>
+                                <field name="x_purchase_order_id" optional="show"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Begründung" col="1">
+                        <field name="x_reason"
+                               nolabel="1"
+                               readonly="x_state != 'planned'"
+                               placeholder="Begründung des Beschaffungsvorgangs eingeben ..."
+                               style="min-height: 160px; width: 100%;"/>
+                    </group>
+                    <group string="Angebotsanfrage/Bestellung" col="1">
+                        <field name="x_purchase_order_ids" nolabel="1" readonly="1">
+                            <list create="0" delete="0">
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                                <field name="date_order"/>
+                                <field name="amount_total"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_greenbear_procurement_search" model="ir.ui.view">
+        <field name="name">greenbear.procurement.search</field>
+        <field name="model">x_greenbear.procurement</field>
+        <field name="arch" type="xml">
+            <search string="Beschaffungsvorgänge suchen">
+                <field name="x_reference"/>
+                <field name="x_name"/>
+                <field name="x_applicant_id"/>
+                <field name="x_responsible_id"/>
+                <field name="x_module_area_id"/>
+                <field name="x_funding_source_id"/>
+                <field name="x_budget_id"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'x_state'}"/>
+                    <filter name="group_module" string="Modul/Bereich" context="{'group_by': 'x_module_area_id'}"/>
+                    <filter name="group_funding" string="Finanzierungsquelle" context="{'group_by': 'x_funding_source_id'}"/>
+                    <filter name="group_budget" string="Budget" context="{'group_by': 'x_budget_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_greenbear_procurement" model="ir.actions.act_window">
+        <field name="name">Beschaffungsvorgänge</field>
+        <field name="res_model">x_greenbear.procurement</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="greenbear_procurement.view_greenbear_procurement_search"/>
+    </record>
+
+    <menuitem id="menu_greenbear_procurement_root" name="greenBEAR Procurement" sequence="50">
+        <menuitem id="menu_greenbear_procurement" name="Beschaffung" sequence="10">
+            <menuitem id="menu_greenbear_procurement_action" action="action_greenbear_procurement" sequence="10"/>
+        </menuitem>
+        <menuitem id="menu_greenbear_master_data" name="Stammdaten" sequence="90"
+                  groups="greenbear_procurement.group_greenbear_admin">
+            <menuitem id="menu_greenbear_season" name="Saisons" action="action_greenbear_season" sequence="10"/>
+            <menuitem id="menu_greenbear_module_area" name="Module/Bereiche" action="action_greenbear_module_area" sequence="20"/>
+            <menuitem id="menu_greenbear_component" name="Baugruppen/Komponenten" action="action_greenbear_component" sequence="30"/>
+            <menuitem id="menu_greenbear_subcategory" name="Unterkategorien" action="action_greenbear_subcategory" sequence="40"/>
+            <menuitem id="menu_greenbear_funding_source" name="Finanzierungsquellen" action="action_greenbear_funding_source" sequence="50"/>
+        </menuitem>
+    </menuitem>
+</odoo>

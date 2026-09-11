@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sequence_greenbear_procurement" model="ir.sequence">
+        <field name="name">greenBEAR Beschaffungsvorgang</field>
+        <field name="code">x_greenbear.procurement</field>
+        <field name="prefix">GB-BES-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="default_greenbear_procurement_reference" model="ir.default">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_reference"/>
+        <field name="json_value">"/"</field>
+    </record>
+
+    <record id="sequence_greenbear_precommitment" model="ir.sequence">
+        <field name="name">greenBEAR Vorab-Mittelbindung</field>
+        <field name="code">x_greenbear.precommitment</field>
+        <field name="prefix">GB-VMB-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="default_greenbear_precommitment_reference" model="ir.default">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_reference"/>
+        <field name="json_value">"/"</field>
+    </record>
+
+    <record id="default_greenbear_precommitment_state" model="ir.default">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_precommitment_state"/>
+        <field name="json_value">"draft"</field>
+    </record>
+
+    <record id="action_initialize_greenbear_procurement" model="ir.actions.server">
+        <field name="name">greenBEAR: Referenz initialisieren</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="binding_model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+for procurement in records:
+    values = {}
+    if not procurement.x_reference or procurement.x_reference == '/':
+        values['x_reference'] = env['ir.sequence'].next_by_code('x_greenbear.procurement') or '/'
+    if not procurement.x_applicant_id:
+        values['x_applicant_id'] = env.user.id
+    if values:
+        procurement.write(values)
+        ]]></field>
+    </record>
+
+    <record id="automation_initialize_greenbear_procurement" model="base.automation">
+        <field name="name">greenBEAR: Neue Beschaffung initialisieren</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="trigger">on_create</field>
+        <field name="action_server_ids" eval="[(6, 0, [ref('greenbear_procurement.action_initialize_greenbear_procurement')])]"/>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

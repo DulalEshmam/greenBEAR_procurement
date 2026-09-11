@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_greenbear_season_list" model="ir.ui.view">
+        <field name="name">greenbear.season.list</field>
+        <field name="model">x_greenbear.season</field>
+        <field name="arch" type="xml"><list string="Saisons"><field name="x_name"/></list></field>
+    </record>
+    <record id="view_greenbear_season_form" model="ir.ui.view">
+        <field name="name">greenbear.season.form</field>
+        <field name="model">x_greenbear.season</field>
+        <field name="arch" type="xml"><form string="Saison"><sheet><group><field name="x_name"/></group></sheet></form></field>
+    </record>
+    <record id="action_greenbear_season" model="ir.actions.act_window">
+        <field name="name">Saisons</field><field name="res_model">x_greenbear.season</field><field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_greenbear_module_area_list" model="ir.ui.view">
+        <field name="name">greenbear.module.area.list</field>
+        <field name="model">x_greenbear.module_area</field>
+        <field name="arch" type="xml"><list string="Module/Bereiche"><field name="x_name"/></list></field>
+    </record>
+    <record id="view_greenbear_module_area_form" model="ir.ui.view">
+        <field name="name">greenbear.module.area.form</field>
+        <field name="model">x_greenbear.module_area</field>
+        <field name="arch" type="xml"><form string="Modul/Bereich"><sheet><group><field name="x_name"/></group></sheet></form></field>
+    </record>
+    <record id="action_greenbear_module_area" model="ir.actions.act_window">
+        <field name="name">Module/Bereiche</field><field name="res_model">x_greenbear.module_area</field><field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_greenbear_component_list" model="ir.ui.view">
+        <field name="name">greenbear.component.list</field>
+        <field name="model">x_greenbear.component</field>
+        <field name="arch" type="xml"><list string="Baugruppen/Komponenten"><field name="x_name"/></list></field>
+    </record>
+    <record id="view_greenbear_component_form" model="ir.ui.view">
+        <field name="name">greenbear.component.form</field>
+        <field name="model">x_greenbear.component</field>
+        <field name="arch" type="xml"><form string="Baugruppe/Komponente"><sheet><group><field name="x_name"/></group></sheet></form></field>
+    </record>
+    <record id="action_greenbear_component" model="ir.actions.act_window">
+        <field name="name">Baugruppen/Komponenten</field><field name="res_model">x_greenbear.component</field><field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_greenbear_subcategory_list" model="ir.ui.view">
+        <field name="name">greenbear.subcategory.list</field>
+        <field name="model">x_greenbear.subcategory</field>
+        <field name="arch" type="xml"><list string="Unterkategorien"><field name="x_name"/></list></field>
+    </record>
+    <record id="view_greenbear_subcategory_form" model="ir.ui.view">
+        <field name="name">greenbear.subcategory.form</field>
+        <field name="model">x_greenbear.subcategory</field>
+        <field name="arch" type="xml"><form string="Unterkategorie"><sheet><group><field name="x_name"/></group></sheet></form></field>
+    </record>
+    <record id="action_greenbear_subcategory" model="ir.actions.act_window">
+        <field name="name">Unterkategorien</field><field name="res_model">x_greenbear.subcategory</field><field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_greenbear_funding_source_list" model="ir.ui.view">
+        <field name="name">greenbear.funding.source.list</field>
+        <field name="model">x_greenbear.funding_source</field>
+        <field name="arch" type="xml"><list string="Finanzierungsquellen"><field name="x_name"/></list></field>
+    </record>
+    <record id="view_greenbear_funding_source_form" model="ir.ui.view">
+        <field name="name">greenbear.funding.source.form</field>
+        <field name="model">x_greenbear.funding_source</field>
+        <field name="arch" type="xml"><form string="Finanzierungsquelle"><sheet><group><field name="x_name"/></group></sheet></form></field>
+    </record>
+    <record id="action_greenbear_funding_source" model="ir.actions.act_window">
+        <field name="name">Finanzierungsquellen</field><field name="res_model">x_greenbear.funding_source</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

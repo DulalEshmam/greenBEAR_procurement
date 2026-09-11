@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_greenbear_budget_list" model="ir.ui.view">
+        <field name="name">greenbear.budget.list</field>
+        <field name="model">x_greenbear.budget</field>
+        <field name="arch" type="xml">
+            <list string="Budgetübersichten" decoration-danger="x_overrun">
+                <field name="x_name"/>
+                <field name="x_odoo_budget_reference" optional="show"/>
+                <field name="x_season_id"/>
+                <field name="x_module_area_id"/>
+                <field name="x_funding_source_id" optional="show"/>
+                <field name="x_budgeted_amount" sum="Budgetiert"/>
+                <field name="x_active_precommitment_amount" sum="Vorabbindungen"/>
+                <field name="x_odoo_committed_amount" sum="Odoo-Bindungen"/>
+                <field name="x_available_amount" sum="Verfügbar"/>
+                <field name="x_overrun" optional="hide"/>
+                <field name="x_last_refresh" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_greenbear_budget_form" model="ir.ui.view">
+        <field name="name">greenbear.budget.form</field>
+        <field name="model">x_greenbear.budget</field>
+        <field name="arch" type="xml">
+            <form string="greenBEAR-Budgetübersicht">
+                <header>
+                    <button name="%(greenbear_procurement.action_greenbear_refresh_budget)d"
+                            type="action" string="Budgetwerte aktualisieren" class="btn-primary"
+                            groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not x_overrun">
+                        Das verfügbare Budget ist negativ. Eine Finance-Aktivität wurde zur Prüfung erzeugt.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="x_name"/>
+                            <field name="x_odoo_budget_reference"/>
+                        </group>
+                        <group>
+                            <field name="x_last_refresh" readonly="1"/>
+                            <field name="x_overrun" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Budgetdimensionen">
+                        <group>
+                            <field name="x_season_id"/>
+                            <field name="x_module_area_id"/>
+                            <field name="x_component_id"/>
+                        </group>
+                        <group>
+                            <field name="x_subcategory_id"/>
+                            <field name="x_funding_source_id"/>
+                        </group>
+                    </group>
+                    <group string="Budgetstatus">
+                        <group>
+                            <field name="x_budgeted_amount"/>
+                            <field name="x_active_precommitment_amount" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="x_odoo_committed_amount" readonly="1"/>
+                            <field name="x_available_amount" readonly="1" class="oe_inline"/>
+                        </group>
+                    </group>
+                    <group string="Vorab-Mittelbindungen" col="1">
+                        <field name="x_precommitment_ids" nolabel="1" readonly="1">
+                            <list create="0" delete="0" decoration-info="x_state == 'active'" decoration-muted="x_state in ['released', 'cancelled']">
+                                <field name="x_reference"/>
+                                <field name="x_procurement_id"/>
+                                <field name="x_amount"/>
+                                <field name="x_state"/>
+                                <field name="x_purchase_order_id" optional="show"/>
+                                <field name="x_activated_on" optional="hide"/>
+                                <field name="x_transferred_on" optional="hide"/>
+                                <field name="x_released_on" optional="hide"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_greenbear_precommitment_list" model="ir.ui.view">
+        <field name="name">greenbear.precommitment.list</field>
+        <field name="model">x_greenbear.precommitment</field>
+        <field name="arch" type="xml">
+            <list string="Vorab-Mittelbindungen" create="0" delete="0" decoration-info="x_state == 'active'" decoration-muted="x_state in ['released', 'cancelled']">
+                <field name="x_reference"/>
+                <field name="x_name"/>
+                <field name="x_procurement_id"/>
+                <field name="x_budget_id"/>
+                <field name="x_amount"/>
+                <field name="x_state"/>
+                <field name="x_purchase_order_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_greenbear_precommitment_form" model="ir.ui.view">
+        <field name="name">greenbear.precommitment.form</field>
+        <field name="model">x_greenbear.precommitment</field>
+        <field name="arch" type="xml">
+            <form string="Vorab-Mittelbindung" create="0" delete="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="x_reference" readonly="1"/>
+                            <field name="x_name" readonly="1"/>
+                            <field name="x_procurement_id" readonly="1"/>
+                            <field name="x_budget_id" readonly="1"/>
+                            <field name="x_amount" readonly="1"/>
+                            <field name="x_state" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="x_purchase_order_id" readonly="1"/>
+                            <field name="x_activated_on" readonly="1"/>
+                            <field name="x_transferred_on" readonly="1"/>
+                            <field name="x_released_on" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Dimensionen">
+                        <group>
+                            <field name="x_season_id" readonly="1"/>
+                            <field name="x_module_area_id" readonly="1"/>
+                            <field name="x_component_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="x_subcategory_id" readonly="1"/>
+                            <field name="x_funding_source_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_greenbear_budget" model="ir.actions.act_window">
+        <field name="name">Budgetübersicht</field>
+        <field name="res_model">x_greenbear.budget</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_greenbear_precommitment" model="ir.actions.act_window">
+        <field name="name">Vorab-Mittelbindungen</field>
+        <field name="res_model">x_greenbear.precommitment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_greenbear_budget_control" name="Budgetsteuerung" parent="greenbear_procurement.menu_greenbear_procurement_root" sequence="20"
+              groups="greenbear_procurement.group_greenbear_finance,greenbear_procurement.group_greenbear_team_lead,greenbear_procurement.group_greenbear_admin"/>
+    <menuitem id="menu_greenbear_budget" name="Budgetübersicht" parent="greenbear_procurement.menu_greenbear_budget_control"
+              action="action_greenbear_budget" sequence="10"/>
+    <menuitem id="menu_greenbear_precommitment" name="Vorab-Mittelbindungen" parent="greenbear_procurement.menu_greenbear_budget_control"
+              action="action_greenbear_precommitment" sequence="20"/>
+</odoo>

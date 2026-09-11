@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="field_greenbear_procurement_reference" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_reference</field>
+        <field name="field_description">Vorgangsreferenz</field>
+        <field name="ttype">char</field>
+        <field name="index">True</field>
+        <field name="help">Automatisch vergebene Referenz des Beschaffungsvorgangs.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Bezeichnung</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+        <field name="help">Kurze, fachlich verständliche Bezeichnung des Beschaffungsvorgangs.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_applicant_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_applicant_id</field>
+        <field name="field_description">Antragsteller</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">res.users</field>
+    </record>
+
+    <record id="field_greenbear_procurement_responsible_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_responsible_id</field>
+        <field name="field_description">Verantwortliche Person</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">res.users</field>
+        <field name="help">Für die weitere Bearbeitung des Vorgangs verantwortliche Person.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_expected_amount" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_expected_amount</field>
+        <field name="field_description">Erwarteter Betrag</field>
+        <field name="ttype">float</field>
+        <field name="required">True</field>
+        <field name="help">Erwarteter Bruttobetrag der Beschaffung; im Kernpilot wird mit EUR und ohne Steuerabweichung getestet.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_state" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_state</field>
+        <field name="field_description">Status</field>
+        <field name="ttype">selection</field>
+        <field name="required">True</field>
+    </record>
+
+    <record id="selection_greenbear_procurement_state_planned" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Geplant</field>
+        <field name="value">planned</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_submitted" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Eingereicht</field>
+        <field name="value">submitted</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_in_review" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">In Prüfung</field>
+        <field name="value">in_review</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_approved" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Freigegeben</field>
+        <field name="value">approved</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_ordered" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Bestellt</field>
+        <field name="value">ordered</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_delivered" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Geliefert</field>
+        <field name="value">delivered</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_invoiced" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Rechnung erfasst</field>
+        <field name="value">invoiced</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_closed" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Abgeschlossen</field>
+        <field name="value">closed</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_rejected" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Abgelehnt</field>
+        <field name="value">rejected</field>
+        <field name="sequence">90</field>
+    </record>
+    <record id="selection_greenbear_procurement_state_cancelled" model="ir.model.fields.selection">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="name">Storniert</field>
+        <field name="value">cancelled</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="default_greenbear_procurement_state" model="ir.default">
+        <field name="field_id" ref="greenbear_procurement.field_greenbear_procurement_state"/>
+        <field name="json_value">"planned"</field>
+    </record>
+
+    <record id="field_greenbear_procurement_season_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_season_id</field>
+        <field name="field_description">Saison</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.season</field>
+    </record>
+    <record id="field_greenbear_procurement_module_area_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_module_area_id</field>
+        <field name="field_description">Modul/Bereich</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.module_area</field>
+    </record>
+    <record id="field_greenbear_procurement_component_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_component_id</field>
+        <field name="field_description">Baugruppe/Komponente</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.component</field>
+    </record>
+    <record id="field_greenbear_procurement_subcategory_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_subcategory_id</field>
+        <field name="field_description">Unterkategorie</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.subcategory</field>
+    </record>
+    <record id="field_greenbear_procurement_funding_source_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_funding_source_id</field>
+        <field name="field_description">Finanzierungsquelle</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.funding_source</field>
+    </record>
+
+    <record id="field_greenbear_procurement_reason" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_reason</field>
+        <field name="field_description">Begründung</field>
+        <field name="ttype">text</field>
+    </record>
+
+    <record id="field_greenbear_procurement_budget_id" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_budget_id</field>
+        <field name="field_description">greenBEAR-Budget</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.budget</field>
+        <field name="help">Pilot-Budgetkombination, gegen die der Vorgang geprüft und vorgemerkt wird.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_precommitment_ids" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_precommitment_ids</field>
+        <field name="field_description">Vorab-Mittelbindungen</field>
+        <field name="ttype">one2many</field>
+        <field name="relation">x_greenbear.precommitment</field>
+        <field name="relation_field">x_procurement_id</field>
+    </record>
+
+    <record id="field_greenbear_procurement_available_budget_snapshot" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_available_budget_snapshot</field>
+        <field name="field_description">Verfügbares Budget (Snapshot)</field>
+        <field name="ttype">float</field>
+        <field name="help">Zuletzt gespeicherter verfügbarer Betrag der zugeordneten greenBEAR-Budgetübersicht.</field>
+    </record>
+
+    <record id="field_greenbear_procurement_budget_overrun" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_budget_overrun</field>
+        <field name="field_description">Budget überschritten</field>
+        <field name="ttype">boolean</field>
+    </record>
+
+    <record id="field_greenbear_procurement_budget_note" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_budget_note</field>
+        <field name="field_description">Budgethinweis</field>
+        <field name="ttype">char</field>
+    </record>
+
+    <record id="field_purchase_order_greenbear_procurement_id" model="ir.model.fields">
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="name">x_greenbear_procurement_id</field>
+        <field name="field_description">greenBEAR-Beschaffungsvorgang</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">x_greenbear.procurement</field>
+        <field name="index">True</field>
+    </record>
+
+    <record id="field_greenbear_procurement_purchase_order_ids" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="name">x_purchase_order_ids</field>
+        <field name="field_description">Angebotsanfragen/Bestellungen</field>
+        <field name="ttype">one2many</field>
+        <field name="relation">purchase.order</field>
+        <field name="relation_field">x_greenbear_procurement_id</field>
+    </record>
+</odoo>

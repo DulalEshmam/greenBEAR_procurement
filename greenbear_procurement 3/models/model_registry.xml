@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="model_greenbear_procurement" model="ir.model">
+        <field name="name">greenBEAR Beschaffungsvorgang</field>
+        <field name="model">x_greenbear.procurement</field>
+    </record>
+    <record id="model_greenbear_budget" model="ir.model">
+        <field name="name">greenBEAR Budgetübersicht</field>
+        <field name="model">x_greenbear.budget</field>
+    </record>
+    <record id="model_greenbear_precommitment" model="ir.model">
+        <field name="name">greenBEAR Vorab-Mittelbindung</field>
+        <field name="model">x_greenbear.precommitment</field>
+    </record>
+</odoo>

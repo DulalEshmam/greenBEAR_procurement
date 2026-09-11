@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_greenbear" model="ir.module.category">
+        <field name="name">greenBEAR</field>
+        <field name="sequence">35</field>
+    </record>
+
+    <record id="privilege_greenbear_procurement" model="res.groups.privilege">
+        <field name="name">Beschaffungsprozess</field>
+        <field name="description">Rollen für den pilotierten greenBEAR-Beschaffungsprozess.</field>
+        <field name="placeholder">Keine Rolle</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="greenbear_procurement.module_category_greenbear"/>
+    </record>
+
+    <record id="group_greenbear_member" model="res.groups">
+        <field name="name">Teammitglied</field>
+        <field name="sequence">10</field>
+        <field name="comment">Beschaffungsvorgänge anlegen, bearbeiten und einreichen sowie Lieferungen bestätigen.</field>
+        <field name="privilege_id" ref="greenbear_procurement.privilege_greenbear_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_greenbear_module_lead" model="res.groups">
+        <field name="name">Modul-/Bereichsleitung</field>
+        <field name="sequence">20</field>
+        <field name="comment">Zusätzlich fachliche Prüfung eingereichter Vorgänge.</field>
+        <field name="privilege_id" ref="greenbear_procurement.privilege_greenbear_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('greenbear_procurement.group_greenbear_member'))]"/>
+    </record>
+
+    <record id="group_greenbear_finance" model="res.groups">
+        <field name="name">Finance</field>
+        <field name="sequence">30</field>
+        <field name="comment">Finanzielle Freigabe, Ablehnung und finanznahe Statusfortschreibung.</field>
+        <field name="privilege_id" ref="greenbear_procurement.privilege_greenbear_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('greenbear_procurement.group_greenbear_member'))]"/>
+    </record>
+
+    <record id="group_greenbear_team_lead" model="res.groups">
+        <field name="name">Teamleitung</field>
+        <field name="sequence">40</field>
+        <field name="comment">Übergreifende Prüf- und Freigaberechte im Pilotprozess.</field>
+        <field name="privilege_id" ref="greenbear_procurement.privilege_greenbear_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('greenbear_procurement.group_greenbear_module_lead')), (4, ref('greenbear_procurement.group_greenbear_finance'))]"/>
+    </record>
+
+    <record id="group_greenbear_admin" model="res.groups">
+        <field name="name">Administration</field>
+        <field name="sequence">50</field>
+        <field name="comment">Vollzugriff einschließlich Stammdatenpflege und Löschung.</field>
+        <field name="privilege_id" ref="greenbear_procurement.privilege_greenbear_procurement"/>
+        <field name="implied_ids" eval="[(4, ref('greenbear_procurement.group_greenbear_team_lead'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="model_greenbear_season" model="ir.model">
+        <field name="name">greenBEAR Saison</field>
+        <field name="model">x_greenbear.season</field>
+    </record>
+    <record id="field_greenbear_season_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_season"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Saison</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+
+    <record id="model_greenbear_module_area" model="ir.model">
+        <field name="name">greenBEAR Modul oder Bereich</field>
+        <field name="model">x_greenbear.module_area</field>
+    </record>
+    <record id="field_greenbear_module_area_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_module_area"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Modul/Bereich</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+
+    <record id="model_greenbear_component" model="ir.model">
+        <field name="name">greenBEAR Baugruppe oder Komponente</field>
+        <field name="model">x_greenbear.component</field>
+    </record>
+    <record id="field_greenbear_component_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_component"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Baugruppe/Komponente</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+
+    <record id="model_greenbear_subcategory" model="ir.model">
+        <field name="name">greenBEAR Unterkategorie</field>
+        <field name="model">x_greenbear.subcategory</field>
+    </record>
+    <record id="field_greenbear_subcategory_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_subcategory"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Unterkategorie</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+
+    <record id="model_greenbear_funding_source" model="ir.model">
+        <field name="name">greenBEAR Finanzierungsquelle</field>
+        <field name="model">x_greenbear.funding_source</field>
+    </record>
+    <record id="field_greenbear_funding_source_name" model="ir.model.fields">
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_funding_source"/>
+        <field name="name">x_name</field>
+        <field name="field_description">Finanzierungsquelle</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+        <field name="index">True</field>
+    </record>
+</odoo>

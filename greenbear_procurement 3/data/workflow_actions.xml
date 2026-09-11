@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_greenbear_submit" model="ir.actions.server">
+        <field name="name">greenBEAR: Einreichen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_member')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'planned':
+        raise UserError('Nur geplante Vorgänge können eingereicht werden.')
+    if not procurement.x_applicant_id:
+        raise UserError('Vor dem Einreichen muss ein Antragsteller ausgewählt werden.')
+    if not procurement.x_responsible_id:
+        raise UserError('Vor dem Einreichen muss eine verantwortliche Person ausgewählt werden.')
+    if not procurement.x_expected_amount or procurement.x_expected_amount <= 0:
+        raise UserError('Der erwartete Betrag muss größer als 0 sein.')
+    if not procurement.x_season_id:
+        raise UserError('Vor dem Einreichen muss eine Saison ausgewählt werden.')
+    if not procurement.x_module_area_id:
+        raise UserError('Vor dem Einreichen muss ein Modul oder Bereich ausgewählt werden.')
+    if not procurement.x_component_id:
+        raise UserError('Vor dem Einreichen muss eine Baugruppe oder Komponente ausgewählt werden.')
+    if not procurement.x_subcategory_id:
+        raise UserError('Vor dem Einreichen muss eine Unterkategorie ausgewählt werden.')
+    if not procurement.x_funding_source_id:
+        raise UserError('Vor dem Einreichen muss eine Finanzierungsquelle ausgewählt werden.')
+    if not procurement.x_reason:
+        raise UserError('Vor dem Einreichen muss eine Begründung erfasst werden.')
+    if not procurement.x_budget_id:
+        raise UserError('Vor dem Einreichen muss ein greenBEAR-Budget ausgewählt werden.')
+    budget = procurement.x_budget_id
+    if budget.x_budgeted_amount <= 0:
+        raise UserError('Das ausgewählte greenBEAR-Budget muss einen positiven Budgetbetrag besitzen.')
+    if budget.x_season_id.id != procurement.x_season_id.id:
+        raise UserError('Die Saison des Vorgangs stimmt nicht mit dem ausgewählten Budget überein.')
+    if budget.x_module_area_id.id != procurement.x_module_area_id.id:
+        raise UserError('Das Modul bzw. der Bereich stimmt nicht mit dem ausgewählten Budget überein.')
+    if budget.x_component_id.id != procurement.x_component_id.id:
+        raise UserError('Die Baugruppe bzw. Komponente stimmt nicht mit dem ausgewählten Budget überein.')
+    if budget.x_subcategory_id.id != procurement.x_subcategory_id.id:
+        raise UserError('Die Unterkategorie stimmt nicht mit dem ausgewählten Budget überein.')
+    if budget.x_funding_source_id.id != procurement.x_funding_source_id.id:
+        raise UserError('Die Finanzierungsquelle stimmt nicht mit dem ausgewählten Budget überein.')
+    open_binding = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', 'in', ['draft', 'active', 'transferred']),
+    ], limit=1)
+    if open_binding:
+        raise UserError('Für diesen Vorgang besteht bereits eine offene Vorab-Mittelbindung.')
+    binding_reference = env['ir.sequence'].next_by_code('x_greenbear.precommitment') or '/'
+    env['x_greenbear.precommitment'].create({
+        'x_reference': binding_reference,
+        'x_name': 'Vorabbindung %s' % (procurement.x_reference or procurement.x_name),
+        'x_procurement_id': procurement.id,
+        'x_budget_id': budget.id,
+        'x_amount': procurement.x_expected_amount,
+        'x_state': 'draft',
+        'x_season_id': procurement.x_season_id.id,
+        'x_module_area_id': procurement.x_module_area_id.id,
+        'x_component_id': procurement.x_component_id.id,
+        'x_subcategory_id': procurement.x_subcategory_id.id,
+        'x_funding_source_id': procurement.x_funding_source_id.id,
+    })
+    procurement.write({'x_state': 'submitted'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_start_review" model="ir.actions.server">
+        <field name="name">greenBEAR: Prüfung beginnen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_module_lead'), ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'submitted':
+        raise UserError('Die Prüfung kann nur für eingereichte Vorgänge begonnen werden.')
+    procurement.write({'x_state': 'in_review'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_approve" model="ir.actions.server">
+        <field name="name">greenBEAR: Freigeben</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'in_review':
+        raise UserError('Nur Vorgänge in Prüfung können freigegeben werden.')
+    binding = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', '=', 'draft'),
+    ], order='id desc', limit=1)
+    if not binding:
+        raise UserError('Für den Vorgang wurde keine vorgemerkte Vorab-Mittelbindung gefunden.')
+    binding.write({
+        'x_state': 'active',
+        'x_amount': procurement.x_expected_amount,
+        'x_activated_on': datetime.datetime.now(),
+    })
+    procurement.write({'x_state': 'approved'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_reject" model="ir.actions.server">
+        <field name="name">greenBEAR: Ablehnen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state not in ['submitted', 'in_review']:
+        raise UserError('Nur eingereichte oder in Prüfung befindliche Vorgänge können abgelehnt werden.')
+    bindings = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', 'in', ['draft', 'active']),
+    ])
+    if bindings:
+        bindings.write({
+            'x_state': 'cancelled',
+            'x_released_on': datetime.datetime.now(),
+        })
+    procurement.write({'x_state': 'rejected'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_rework" model="ir.actions.server">
+        <field name="name">greenBEAR: Überarbeiten</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_member')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'rejected':
+        raise UserError('Nur abgelehnte Vorgänge können zur Überarbeitung zurückgesetzt werden.')
+    procurement.write({'x_state': 'planned'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_mark_ordered" model="ir.actions.server">
+        <field name="name">greenBEAR: Als bestellt kennzeichnen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'approved':
+        raise UserError('Nur freigegebene Vorgänge können als bestellt gekennzeichnet werden.')
+    if not procurement.x_purchase_order_ids:
+        raise UserError('Vor dem Status Bestellt muss eine Angebotsanfrage oder Bestellung verknüpft sein.')
+    confirmed_order_ids = []
+    for linked_order in procurement.x_purchase_order_ids:
+        if linked_order.state in ['purchase', 'done']:
+            confirmed_order_ids.append(linked_order.id)
+    confirmed_orders = env['purchase.order'].browse(confirmed_order_ids)
+    if not confirmed_orders:
+        raise UserError('Die verknüpfte Angebotsanfrage muss zuerst als Odoo-Bestellung bestätigt werden.')
+    if len(confirmed_orders) > 1:
+        raise UserError('Der Kernpilot unterstützt höchstens eine bestätigte Bestellung je Beschaffungsvorgang.')
+    binding = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', '=', 'transferred'),
+        ('x_purchase_order_id', '=', confirmed_orders.id),
+    ], limit=1)
+    if not binding:
+        raise UserError('Die Vorab-Mittelbindung wurde noch nicht an die bestätigte Bestellung übergeben. Bitte Bestellung speichern und erneut laden.')
+    procurement.write({'x_state': 'ordered'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_mark_delivered" model="ir.actions.server">
+        <field name="name">greenBEAR: Lieferung bestätigen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_member')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'ordered':
+        raise UserError('Die Lieferung kann nur für bestellte Vorgänge bestätigt werden.')
+    procurement.write({'x_state': 'delivered'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_mark_invoiced" model="ir.actions.server">
+        <field name="name">greenBEAR: Rechnung erfassen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'delivered':
+        raise UserError('Eine Rechnung kann nur nach bestätigter Lieferung erfasst werden.')
+    procurement.write({'x_state': 'invoiced'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_close" model="ir.actions.server">
+        <field name="name">greenBEAR: Abschließen</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state != 'invoiced':
+        raise UserError('Nur Vorgänge mit erfasster Rechnung können abgeschlossen werden.')
+    procurement.write({'x_state': 'closed'})
+        ]]></field>
+    </record>
+
+    <record id="action_greenbear_cancel" model="ir.actions.server">
+        <field name="name">greenBEAR: Stornieren</field>
+        <field name="model_id" ref="greenbear_procurement.model_greenbear_procurement"/>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(6, 0, [ref('greenbear_procurement.group_greenbear_finance'), ref('greenbear_procurement.group_greenbear_team_lead'), ref('greenbear_procurement.group_greenbear_admin')])]"/>
+        <field name="code"><![CDATA[
+for procurement in records:
+    if procurement.x_state in ['closed', 'cancelled']:
+        raise UserError('Abgeschlossene oder bereits stornierte Vorgänge können nicht erneut storniert werden.')
+    confirmed_order_ids = []
+    for linked_order in procurement.x_purchase_order_ids:
+        if linked_order.state in ['purchase', 'done']:
+            confirmed_order_ids.append(linked_order.id)
+    confirmed_orders = env['purchase.order'].browse(confirmed_order_ids)
+    if confirmed_orders:
+        raise UserError('Vor der Stornierung des Beschaffungsvorgangs muss die verknüpfte Odoo-Bestellung storniert werden.')
+    draft_bindings = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', '=', 'draft'),
+    ])
+    active_bindings = env['x_greenbear.precommitment'].search([
+        ('x_procurement_id', '=', procurement.id),
+        ('x_state', 'in', ['active', 'transferred']),
+    ])
+    if draft_bindings:
+        draft_bindings.write({
+            'x_state': 'cancelled',
+            'x_released_on': datetime.datetime.now(),
+        })
+    if active_bindings:
+        active_bindings.write({
+            'x_state': 'released',
+            'x_released_on': datetime.datetime.now(),
+        })
+    procurement.write({'x_state': 'cancelled'})
+        ]]></field>
+    </record>
+</odoo>
